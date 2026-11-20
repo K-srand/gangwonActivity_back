@@ -17,6 +17,7 @@ import com.multicampus.gangwonActivity.provider.JwtProvider;
 import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.AdminService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 
     private final JwtProvider jwtProvider;
@@ -51,7 +53,7 @@ public class AdminServiceImpl implements AdminService {
             if(reportMapper.alreadySanctionedUser(userNo)) return SanctionedUserResponseDto.alreadySanctionedUser();
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("sanctionUser 처리 중 오류", e);
             return ResponseDto.databaseError();
 
         }
@@ -70,7 +72,7 @@ public class AdminServiceImpl implements AdminService {
             if(!reportMapper.alreadySanctionedUser(userNo)) return SanctionedUserResponseDto.alreadySanctionedUser();
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("disSanctionUser 처리 중 오류", e);
             return ResponseDto.databaseError();
 
         }
@@ -87,7 +89,7 @@ public class AdminServiceImpl implements AdminService {
                 return SanctionContentResponseDto.alreadySanctionContent();
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("sanctionContent 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         LocalDateTime localDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
@@ -103,7 +105,7 @@ public class AdminServiceImpl implements AdminService {
             if (!reportMapper.alreadySanctionContent(reportedContentNo))
                 return SanctionContentResponseDto.alreadySanctionContent();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("disSanctionContent 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         reportMapper.desanctionContent(reportedContentNo);
@@ -124,7 +126,7 @@ public class AdminServiceImpl implements AdminService {
             userRepository.save(user);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("reuseInfo 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 

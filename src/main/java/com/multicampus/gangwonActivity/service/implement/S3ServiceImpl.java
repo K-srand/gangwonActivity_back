@@ -8,6 +8,7 @@ import com.multicampus.gangwonActivity.repository.BoardRepository;
 import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3ServiceImpl implements S3Service {
 
 
@@ -107,7 +109,7 @@ public class S3ServiceImpl implements S3Service {
                     .build());
             boardMapper.deleteImageFile(fileUrl);
         } catch (SdkException e){
-            System.out.println("error message" + e.getMessage());
+            log.error("S3 파일 삭제 실패: {}", fileUrl, e);
             throw new IOException("S3 File Delete Error");
         }
     }

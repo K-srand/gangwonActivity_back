@@ -2,12 +2,14 @@ package com.multicampus.gangwonActivity.service;
 
 import com.multicampus.gangwonActivity.dto.request.api.GetNaverMapDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NaverMapService {
 
     private final String apiUrl = "https://oapi.map.naver.com/openapi/v3/maps.js";
@@ -37,7 +39,7 @@ public class NaverMapService {
                 .header("X-NCP-APIGW-API-KEY", clientSecret)
                 .retrieve()
                 .body(String.class);
-        System.out.println(body);
+        log.debug("네이버 길찾기 응답: {}", body);
         return body;  // You'll need to parse the response to get the time
     }
 }

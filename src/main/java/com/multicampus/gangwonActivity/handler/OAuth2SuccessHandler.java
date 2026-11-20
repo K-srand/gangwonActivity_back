@@ -6,8 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -16,11 +15,11 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
 
-    private final Logger logger = LoggerFactory.getLogger(OAuth2SuccessHandler.class);
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request
@@ -33,7 +32,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtProvider.create(userId);
         long expirationTime = 3600;  // 토큰 만료 시간 (초 단위)
 
-        logger.info("token : " + token);
+        log.info("OAuth2 로그인 성공: userId={}", userId); // 토큰은 로그에 남기지 않음
 
         response.sendRedirect("https://gangwonactivity.site/auth/oauth-response/" + token + "/" + expirationTime);
     }

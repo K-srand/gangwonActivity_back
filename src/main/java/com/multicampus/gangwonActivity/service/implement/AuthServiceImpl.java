@@ -18,8 +18,7 @@ import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
 
@@ -38,7 +38,6 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final EmailProvider emailProvider;
-    private final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
 
 
@@ -74,7 +73,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("signUp 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -113,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("signIn 처리 중 오류", e);
             return  ResponseDto.databaseError();
         }
 
@@ -135,9 +134,9 @@ public class AuthServiceImpl implements AuthService {
             //세션에 이메일, 인증 번호 저장
             session.setAttribute("email", email);
             session.setAttribute("certificationNumber", certificationNumber);
-            logger.info("인증 번호 저장: email: {}, certificationNumber: {}", email, certificationNumber);
+            log.info("인증 번호 발송: email={}", email); // 인증번호는 로그에 남기지 않음
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("emailCertification 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -152,7 +151,7 @@ public class AuthServiceImpl implements AuthService {
             // 세션에서 저장된 이메일과 인증 번호 가져오기
             String sessionEmail = (String) session.getAttribute("email");
             String sessionCertificationNumber = (String) session.getAttribute("certificationNumber");
-            logger.info("세션에서 가져온 email: {}, 인증 번호: {}", sessionEmail, sessionCertificationNumber);
+            log.debug("세션 인증 정보 확인: email={}", sessionEmail);
 
             if(sessionEmail == null || sessionCertificationNumber == null) {
                 return CheckCertificationResponseDto.sessionNull();
@@ -170,7 +169,7 @@ public class AuthServiceImpl implements AuthService {
             if(!checkFind) session.invalidate();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("checkCertification 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -187,8 +186,7 @@ public class AuthServiceImpl implements AuthService {
             String certificationNumber = dto.getCertificationNumber();
             String userName =dto.getUserName();
 
-            System.out.println("Session Email: " + sessionEmail);
-            System.out.println("Session Certification Number: " + sessionCertificationNumber);
+            log.debug("세션 인증 정보 확인: email={}", sessionEmail);
 
             User user =userRepository.findByUserEmail(email);
             if (user == null) return CheckCertificationResponseDto.notExistUser();
@@ -215,7 +213,7 @@ public class AuthServiceImpl implements AuthService {
             session.invalidate();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("findIdCertification 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -232,8 +230,7 @@ public class AuthServiceImpl implements AuthService {
             String sessionEmail = (String) session.getAttribute("email");
             String sessionCertificationNumber = (String) session.getAttribute("certificationNumber");
 
-            System.out.println("Session Email: " + sessionEmail);
-            System.out.println("Session Certification Number: " + sessionCertificationNumber);
+            log.debug("세션 인증 정보 확인: email={}", sessionEmail);
 
 
             if (sessionEmail == null || sessionCertificationNumber == null) {
@@ -267,7 +264,7 @@ public class AuthServiceImpl implements AuthService {
             session.invalidate();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("findPwdCertification 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 

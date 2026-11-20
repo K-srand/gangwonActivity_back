@@ -6,12 +6,14 @@ import com.multicampus.gangwonActivity.entity.User;
 import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -25,7 +27,7 @@ public class UserServiceImpl implements UserService {
             user = userRepository.findByUserId(id);
             if(user ==null) return GetSignInUserResponseDto.notExistUser();
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("getSignInUser 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 

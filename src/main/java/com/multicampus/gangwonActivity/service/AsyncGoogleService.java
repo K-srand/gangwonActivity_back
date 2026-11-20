@@ -1,5 +1,6 @@
 package com.multicampus.gangwonActivity.service;
 
+import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.multicampus.gangwonActivity.entity.Tour4_0;
@@ -14,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@Slf4j
 public class AsyncGoogleService {
 
     @Async
@@ -52,7 +54,8 @@ public class AsyncGoogleService {
                 }
             }
         } catch (Exception e) {
-            System.out.println("Error parsing Google API response for place: " + placeTitle + " Error: " + e.getMessage());
+            // 예외 메시지에 API 키가 포함된 URL이 들어갈 수 있어 예외 종류만 남김
+            log.warn("Google 평점 조회 실패: place={}, error={}", placeTitle, e.getClass().getSimpleName());
         }
         return CompletableFuture.completedFuture(null);
     }

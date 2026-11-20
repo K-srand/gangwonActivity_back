@@ -1,12 +1,11 @@
 package com.multicampus.gangwonActivity.provider;
 
+import lombok.extern.slf4j.Slf4j;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +17,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
 
     @Value("${secret-key}")
     private String secretKey;
@@ -54,11 +53,11 @@ public class JwtProvider {
 
             return claims.getSubject();
         } catch (ExpiredJwtException e) {
-            logger.warn("Expired JWT token: {}", e.getMessage());
+            log.warn("Expired JWT token: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            logger.warn("Malformed JWT token: {}", e.getMessage());
+            log.warn("Malformed JWT token: {}", e.getMessage());
         } catch (Exception e) {
-            logger.error("Error validating JWT token: {}", e.getMessage());
+            log.error("Error validating JWT token: {}", e.getMessage());
         }
         return null;
     }

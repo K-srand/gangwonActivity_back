@@ -12,6 +12,7 @@ import com.multicampus.gangwonActivity.repository.CommentRepository;
 import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.ReportService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ReportServiceImpl implements ReportService {
 
     private final BoardRepository boardRepository;
@@ -38,7 +40,7 @@ public class ReportServiceImpl implements ReportService {
             if(reportMapper.alreadyReportedBoard(boardNo, userNo)) return ReportedContentResponseDto.alreadyReportedContent();
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("reportBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -66,7 +68,7 @@ public class ReportServiceImpl implements ReportService {
             if(reportMapper.alreadyReportedComment(commentNo, userNo)) return ReportedContentResponseDto.alreadyReportedContent();
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("reportComment 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 

@@ -8,6 +8,7 @@ import com.multicampus.gangwonActivity.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import org.springframework.validation.annotation.Validated;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
@@ -87,8 +89,7 @@ public class AuthController {
     public ResponseEntity<? super CheckCertificationResponseDto> findIdCertification(
             @RequestBody @Validated CheckCertificationRequestDto requestBody,
             HttpSession session) {
-        System.out.println("Session mail: "+ (String) session.getAttribute("email") );
-        System.out.println("Session certification: "+ (String) session.getAttribute("certificationNumber") );
+        log.debug("아이디 찾기 인증 요청: email={}", session.getAttribute("email"));
         ResponseEntity<? super CheckCertificationResponseDto> response = authService.findIdCertification(requestBody, session);
         return response;
     }
@@ -98,8 +99,7 @@ public class AuthController {
     public ResponseEntity<? super CheckCertificationResponseDto> findPwdCertification(
             @RequestBody @Validated CheckCertificationRequestDto requestBody,
             HttpSession session) {
-        System.out.println("Session mail: "+ (String) session.getAttribute("email") );
-        System.out.println("Session certificationNumber: "+ (String) session.getAttribute("certificationNumber") );
+        log.debug("비밀번호 찾기 인증 요청: email={}", session.getAttribute("email"));
         ResponseEntity<? super CheckCertificationResponseDto> response = authService.findPwdCertification(requestBody, session);
         return response;
     }

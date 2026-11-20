@@ -14,6 +14,7 @@ import com.multicampus.gangwonActivity.repository.BoardRepository;
 import com.multicampus.gangwonActivity.repository.UserRepository;
 import com.multicampus.gangwonActivity.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MyPageServiceImpl implements MyPageService {
 
     private final UserRepository userRepository;
@@ -55,7 +57,7 @@ public class MyPageServiceImpl implements MyPageService {
             myFavoriteMapper.deleteMyFavoritesByPlaceNo(placeNo);
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("deleteMyFavorites 처리 중 오류", e);
             return MyPageResponseDto.databaseError();
         }
         return MyPageResponseDto.success();
@@ -97,7 +99,7 @@ public class MyPageServiceImpl implements MyPageService {
                 userRepository.save(user);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("modifyMyInfo 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -122,7 +124,7 @@ public class MyPageServiceImpl implements MyPageService {
             userRepository.save(user);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("deleteMyInfo 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -146,7 +148,7 @@ public class MyPageServiceImpl implements MyPageService {
             boolean isMatch = passwordEncoder.matches(dto.getUserPassword(), user.getUserPassword());
             if(!isMatch) return ModifyMyInfoResponseDto.passwordInFailed();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("checkPassword 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -172,7 +174,7 @@ public class MyPageServiceImpl implements MyPageService {
             myFavoriteMapper.deleteMyCourse(myCourseNo);
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("deleteMyCourse 처리 중 오류", e);
             return MyPageResponseDto.databaseError();
         }
         return MyPageResponseDto.success();

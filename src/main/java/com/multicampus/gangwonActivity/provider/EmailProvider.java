@@ -5,9 +5,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class EmailProvider {
 
     private final JavaMailSender javaMailSender;
@@ -30,7 +32,7 @@ public class EmailProvider {
             javaMailSender.send(message);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            log.error("sendCertificationMail 처리 중 오류", exception);
             return false;
         }
         return true;
@@ -52,7 +54,7 @@ public class EmailProvider {
             javaMailSender.send(message);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            log.error("sendFindIdMail 처리 중 오류", exception);
             return false;
         }
         return true;
@@ -75,7 +77,7 @@ public class EmailProvider {
             javaMailSender.send(message);
 
         } catch (Exception exception) {
-            exception.printStackTrace();
+            log.error("sendFindPwdMail 처리 중 오류", exception);
             return false;
         }
         return true;

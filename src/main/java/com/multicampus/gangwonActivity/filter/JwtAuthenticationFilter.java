@@ -10,8 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,8 +28,8 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
@@ -74,13 +73,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } catch (ExpiredJwtException ex) {
             // JWT가 만료되었을 때의 처리
-            logger.warn("Expired JWT token: {}", ex.getMessage());
+            log.warn("Expired JWT token: {}", ex.getMessage());
         } catch (MalformedJwtException ex) {
             // JWT가 잘못되었을 때의 처리
-            logger.warn("Malformed JWT token: {}", ex.getMessage());
+            log.warn("Malformed JWT token: {}", ex.getMessage());
         } catch (Exception e) {
             // 기타 예외 처리
-            logger.error("Unexpected error during JWT validation", e);
+            log.error("Unexpected error during JWT validation", e);
         }
 
         filterChain.doFilter(request, response);

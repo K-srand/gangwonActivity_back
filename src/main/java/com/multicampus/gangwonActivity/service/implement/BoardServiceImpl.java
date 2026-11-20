@@ -13,6 +13,7 @@ import com.multicampus.gangwonActivity.repository.*;
 import com.multicampus.gangwonActivity.service.BoardService;
 import com.multicampus.gangwonActivity.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -28,6 +29,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
@@ -83,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
             boardImageRepository.saveAll(imageEntities);
 
         }catch (Exception e) {
-            e.printStackTrace();
+            log.error("postBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         return PostBoardResponseDto.success();
@@ -128,7 +130,7 @@ public class BoardServiceImpl implements BoardService {
             boardImageRepository.saveAll(imageEntities);
 
         }catch (Exception e) {
-            e.printStackTrace();
+            log.error("patchBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         return PatchBoardResponseDto.success();
@@ -167,7 +169,7 @@ public class BoardServiceImpl implements BoardService {
 
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("deleteBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         return DeleteBoardResponseDto.success();
@@ -203,7 +205,7 @@ public class BoardServiceImpl implements BoardService {
             commentRepository.save(comment);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("postComment 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
         return PostCommentResponseDto.success();
@@ -244,7 +246,7 @@ public class BoardServiceImpl implements BoardService {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("likesBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
         }
 
@@ -285,7 +287,7 @@ public class BoardServiceImpl implements BoardService {
             }
 
         }catch (Exception e){
-            e.printStackTrace();
+            log.error("dislikesBoard 처리 중 오류", e);
             return ResponseDto.databaseError();
 
         }

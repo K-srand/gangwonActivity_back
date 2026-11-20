@@ -4,6 +4,7 @@ import com.multicampus.gangwonActivity.dto.request.board.FileUploadRequestDto;
 import com.multicampus.gangwonActivity.service.FileService;
 import com.multicampus.gangwonActivity.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/file")
 @RequiredArgsConstructor
+@Slf4j
 public class FileController {
 
     private final S3Service s3Service;
@@ -42,7 +44,7 @@ public class FileController {
                                         @AuthenticationPrincipal String userId) throws IOException {
         String fileName = fileUploadRequestDto.getFileName();
         String imageAddress = fileUploadRequestDto.getFileUrl();
-        System.out.println("imageAddress : " + imageAddress);
+        log.debug("이미지 삭제 요청: {}", imageAddress);
         s3Service.deleteFile(imageAddress, userId);
         return ResponseEntity.ok().build();
 
