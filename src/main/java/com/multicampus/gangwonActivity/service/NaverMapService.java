@@ -3,12 +3,8 @@ package com.multicampus.gangwonActivity.service;
 import com.multicampus.gangwonActivity.dto.request.api.GetNaverMapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
@@ -31,18 +27,17 @@ public class NaverMapService {
 
     //소요시간 호출
     public String getDrivingDuration(GetNaverMapDto getNaverMapDto) {
-        RestTemplate restTemplate = new RestTemplate();
         String url = directionsApiUrl + "?start=" + getNaverMapDto.getStartLng() + "," + getNaverMapDto.getStartLat() + "&goal="
                 + getNaverMapDto.getEndLng() + "," + getNaverMapDto.getEndLat();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-APIGW-API-KEY-ID", clientId);
-        headers.set("X-NCP-APIGW-API-KEY", clientSecret);
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-        System.out.println(response.getBody());
-        return response.getBody();  // You'll need to parse the response to get the time
+        String body = RestClient.create()
+                .get()
+                .uri(url)
+                .header("X-NCP-APIGW-API-KEY-ID", clientId)
+                .header("X-NCP-APIGW-API-KEY", clientSecret)
+                .retrieve()
+                .body(String.class);
+        System.out.println(body);
+        return body;  // You'll need to parse the response to get the time
     }
 }
