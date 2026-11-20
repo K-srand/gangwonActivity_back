@@ -46,6 +46,8 @@ public interface BoardMapper {
 
     void updateMyCourse(@Param("boardNo") Long boardNo, @Param("myCourseNo") Long myCourseNo);
 
+    Long selectMyCourseOwner(@Param("myCourseNo") Long myCourseNo);
+
     List<Board> getBoardListByUserNo(Long userNo);
 
     //    Integer countBoardByUserNo(Long userNo);

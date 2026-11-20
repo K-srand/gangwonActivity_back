@@ -194,6 +194,11 @@
         WHERE boardNo = #{boardNo}
     </update>
 
+    <!-- 나만의 코스 소유자 조회 -->
+    <select id="selectMyCourseOwner" parameterType="long" resultType="long">
+        SELECT userNo FROM myCourse WHERE myCourseNo = #{myCourseNo}
+    </select>
+
     <!-- 작성글 작성시 유저 경험치 증가-->
     <update id="incrementExpBoardWrite" parameterType="long">
         UPDATE user

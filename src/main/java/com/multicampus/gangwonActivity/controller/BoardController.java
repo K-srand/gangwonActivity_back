@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -171,14 +172,21 @@ public class BoardController {
 
     //작성글 코스 지우기
     @PatchMapping("/deletemycourse/{boardNo}")
-    public void deleteMyCourse(@PathVariable("boardNo") Long boardNo) {
-        boardService.deleteMyCourse(boardNo);
+    public ResponseEntity<Void> deleteMyCourse(@PathVariable("boardNo") Long boardNo,
+                                               @AuthenticationPrincipal String userId) {
+        if (!boardService.deleteMyCourse(boardNo, userId)) return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        return ResponseEntity.ok().build();
     }
 
     //작성글 코스 수정
     @PatchMapping("/updatemycourse/{boardNo}")
-    public void updateMyCourse(@PathVariable("boardNo") Long boardNo, @RequestBody PatchBoardRequestDto patchBoardRequestDto) {
-        boardService.updateMyCourse(boardNo, patchBoardRequestDto.getMyCourseNo());
+    public ResponseEntity<Void> updateMyCourse(@PathVariable("boardNo") Long boardNo,
+                                               @RequestBody PatchBoardRequestDto patchBoardRequestDto,
+                                               @AuthenticationPrincipal String userId) {
+        if (!boardService.updateMyCourse(boardNo, patchBoardRequestDto.getMyCourseNo(), userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
     }
     // 좋아요
     @PostMapping("/like/{boardNo}")

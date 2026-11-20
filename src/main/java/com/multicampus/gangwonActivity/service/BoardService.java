@@ -54,9 +54,9 @@ public interface BoardService {
 
     int countMyCourse(String userId);
 
-    void deleteMyCourse(Long boardNo);
+    boolean deleteMyCourse(Long boardNo, String userId);
 
-    void updateMyCourse(Long boardNo, Long myCourseNo);
+    boolean updateMyCourse(Long boardNo, Long myCourseNo, String userId);
 
     void incrementExp3(String id);
 

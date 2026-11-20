@@ -29,6 +29,8 @@ public class FileController {
         try {
             String fileUrl = s3Service.uploadFile(uploadedfile);
             return ResponseEntity.ok(fileUrl);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
         }
@@ -36,11 +38,12 @@ public class FileController {
 
     //작성글 이미지 삭제 서비스 호출
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteFile(@RequestBody FileUploadRequestDto fileUploadRequestDto) throws IOException {
+    public ResponseEntity<?> deleteFile(@RequestBody FileUploadRequestDto fileUploadRequestDto,
+                                        @AuthenticationPrincipal String userId) throws IOException {
         String fileName = fileUploadRequestDto.getFileName();
         String imageAddress = fileUploadRequestDto.getFileUrl();
         System.out.println("imageAddress : " + imageAddress);
-        s3Service.deleteFile(imageAddress);
+        s3Service.deleteFile(imageAddress, userId);
         return ResponseEntity.ok().build();
 
     }

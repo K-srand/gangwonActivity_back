@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @Service
@@ -105,7 +106,7 @@ public class BoardServiceImpl implements BoardService {
             Long userNo = userRepository.findUserNoByUserId(id);
 
             // 나의 글 확인
-            if(board.getUserNo() != userNo) return PatchBoardResponseDto.noPermission();
+            if(!Objects.equals(board.getUserNo(), userNo)) return PatchBoardResponseDto.noPermission();
 
             //수정된 데이터 저장
             board.setBoardTitle(dto.getTitle());
@@ -156,7 +157,7 @@ public class BoardServiceImpl implements BoardService {
             Long userNo = userRepository.findUserNoByUserId(id);
 
             // 나의 글 확인
-            if(board.getUserNo() != userNo) return DeleteBoardResponseDto.noPermission();
+            if(!Objects.equals(board.getUserNo(), userNo)) return DeleteBoardResponseDto.noPermission();
 
             // 글 삭제 시 이미지와 댓글 같이 삭제
 //            boardImageRepository.deleteByBoardNo(boardNo);
@@ -388,12 +389,29 @@ public class BoardServiceImpl implements BoardService {
         return boardMapper.countMyCourse(boardMapper.selectUserNo(userId));
     }
 
-    public void deleteMyCourse(Long boardNo) {
+    //작성글 코스 지우기 (본인 글만)
+    @Override
+    public boolean deleteMyCourse(Long boardNo, String userId) {
+        if (!isBoardWriter(boardNo, userId)) return false;
         boardMapper.deleteMyCourse(boardNo);
+        return true;
     }
 
-    public void updateMyCourse(Long boardNo, Long myCourseNo) {
+    //작성글 코스 변경 (본인 글 + 본인 코스만)
+    @Override
+    public boolean updateMyCourse(Long boardNo, Long myCourseNo, String userId) {
+        if (!isBoardWriter(boardNo, userId)) return false;
+        Long userNo = userRepository.findUserNoByUserId(userId);
+        if (!Objects.equals(boardMapper.selectMyCourseOwner(myCourseNo), userNo)) return false;
         boardMapper.updateMyCourse(boardNo, myCourseNo);
+        return true;
+    }
+
+    private boolean isBoardWriter(Long boardNo, String userId) {
+        Board board = boardRepository.findByBoardNo(boardNo);
+        if (board == null) return false;
+        Long userNo = userRepository.findUserNoByUserId(userId);
+        return userNo != null && Objects.equals(board.getUserNo(), userNo);
     }
 
     public void incrementExp3(String id){

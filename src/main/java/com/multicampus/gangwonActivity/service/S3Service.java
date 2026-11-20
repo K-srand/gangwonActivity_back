@@ -10,6 +10,6 @@ public interface S3Service {
 
     String uploadFile(MultipartFile multipartFile) throws IOException;
 
-    void deleteFile(String fileUrl) throws IOException;
+    void deleteFile(String fileUrl, String userId) throws IOException;
 
 }
