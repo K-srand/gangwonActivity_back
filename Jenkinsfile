@@ -70,8 +70,11 @@ pipeline {
         stage('Docker Build & Deploy') {
             steps {
                 echo '애플리케이션 빌드 및 배포 중...'
+                // --pull: 서버에 캐시된 예전 베이스 이미지 대신 최신 보안 패치 이미지를 받음
+                // 이미지를 먼저 빌드한 뒤 교체해서 중단 시간을 줄임
+                sh 'docker-compose --env-file .env build --pull'
                 sh 'docker-compose down || true'
-                sh 'docker-compose --env-file .env up -d --build'
+                sh 'docker-compose --env-file .env up -d'
             }
         }
     }
