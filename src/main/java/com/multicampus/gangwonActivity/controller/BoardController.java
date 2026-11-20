@@ -155,14 +155,16 @@ public class BoardController {
     //나만의 코스 불러오기
     @PostMapping("/mycourse")
     public ResponseEntity<PageImpl<Map<String, Object>>> getMyCourse(
+            @AuthenticationPrincipal String userId,
             @RequestBody MyCourseUploadRequestDto myCourseUploadRequestDto,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "2") int size) {
         SearchPageDto searchPageDto = new SearchPageDto();
         searchPageDto.setPage(page);
         searchPageDto.setSize(size);
-        List<Map<String, Object>> myCourse = boardService.getMyCourse(myCourseUploadRequestDto.getUserId());
-        int myCourseCount = boardService.countMyCourse(myCourseUploadRequestDto.getUserId());
+        // 요청 본문의 userId 대신 토큰의 사용자 코스만 조회
+        List<Map<String, Object>> myCourse = boardService.getMyCourse(userId);
+        int myCourseCount = boardService.countMyCourse(userId);
         return ResponseEntity.ok(
                 new PageImpl<>(myCourse, PageRequest.of(searchPageDto.getPage(), searchPageDto.getSize()), myCourseCount));
     }

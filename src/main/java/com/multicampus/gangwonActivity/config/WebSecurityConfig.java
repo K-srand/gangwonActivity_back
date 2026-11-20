@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
@@ -57,27 +58,45 @@ public class WebSecurityConfig {
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(true))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/",
-                                "/api/v1/auth/**",
-                                "/api/v1/search/**",
-                                "/api/v1/board/**",
-                                "/file/**",
+                        // ---------- 공개: 로그인 없이 사용하는 화면 ----------
+                        .requestMatchers(
+                                "/",
+                                "/error",                   // 공개 API에서 난 에러 응답이 403으로 바뀌지 않도록
+                                "/resources/**",            // gangwondo.json 등 정적 리소스
+                                "/oauth2/**",               // 카카오 로그인 콜백
+                                "/api/v1/auth/**"           // 회원가입, 로그인, 이메일 인증, 아이디·비밀번호 찾기
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/getjson/getplace", // 메인 장소 목록
+                                "/api/v1/getmap",           // 네이버 지도 스크립트 주소
+                                "/api/v1/weather/data",     // 메인 날씨 달력
+                                "/api/v1/recommend/*",      // 메인 추천 코스 상세
+                                "/api/v1/board/",           // 커뮤니티 목록 (읽기 전용)
+                                "/api/v1/board/best",
+                                "/api/v1/board/notice"
+                        ).permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/getjson/getplacetitle",
+                                "/api/v1/getjson/getplacecat",
+                                "/api/v1/recommend"         // 메인 추천 코스
+                        ).permitAll()
+
+                        // ---------- 관리자 전용 ----------
+                        .requestMatchers(
+                                "/api/v1/admin/**",
+                                "/api/v1/getjson/save",     // 스케줄러 작업 (수동 실행은 관리자만)
+                                "/api/v1/getjson/rating",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/api/v1/mypage/**",
-                                "/swagger-ui.html",
-                                "/api/v1/getjson/**",
-                                "/api/v1/auth/check-id",
-                                "/api/v1/auth/check-nickname",
-                                "/api/v1/**",
-                                "/api/v1/weather/**",
-                                "/resources/**",
-                                "/static/**",
-                                "/oauth2/**"
-                                ).permitAll()
-                        .requestMatchers("/api/v1/user/**"
-                        ).hasRole("USER")
-                        .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
+                                "/swagger-ui.html"
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/v1/report/",          // 신고 목록
+                                "/api/v1/weather"           // 스케줄러 작업 (수동 실행은 관리자만)
+                        ).hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/report/delete/**").hasRole("ADMIN")
+
+                        // ---------- 나머지는 로그인 필요 ----------
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
